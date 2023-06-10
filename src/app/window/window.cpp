@@ -51,7 +51,7 @@ static const GLfloat g_vertex_buffer_data[] = {
 };
 
 
-int GLWindow::pre_render() {
+int GLWindow::pre_render_loop() {
     GLuint VAO;
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
@@ -67,10 +67,11 @@ int GLWindow::pre_render() {
     return 0;
 }
 
-void GLWindow::render() {
+void GLWindow::pre_render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
 
-
+void GLWindow::render() {
     glUseProgram(state.programID);
 
     glEnableVertexAttribArray(0);
@@ -81,15 +82,16 @@ void GLWindow::render() {
     glDisableVertexAttribArray(0);
 
     glUseProgram(0);
+}
 
-
+void GLWindow::post_render() {
     glfwSwapBuffers(mWindow);
     glfwPollEvents();
 
     mIsRunning = glfwGetKey(mWindow, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(mWindow) == 0;
 }
 
-int GLWindow::post_render() {
+int GLWindow::post_render_loop() {
     glDeleteProgram(state.programID);
     return 0;
 }

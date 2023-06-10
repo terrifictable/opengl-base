@@ -28,9 +28,11 @@ namespace nwindow {
         void set_native_window(void* window) { mWindow = (GLFWwindow*)window; }
         GLFWwindow* get_native_window()      { return mWindow; }
 
-        int pre_render();
+        int pre_render_loop();
+        void pre_render();
         void render();
-        int post_render();
+        void post_render();
+        int post_render_loop();
     };
 }
 

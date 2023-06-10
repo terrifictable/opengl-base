@@ -4,6 +4,7 @@
 #include <ios>
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 #include "common.h"
 
@@ -50,11 +51,11 @@ GLuint load_shader(const char* vert_path, const char* frag_path) {
 
     glGetShaderiv(vID, GL_COMPILE_STATUS, &status);
     glGetShaderiv(vID, GL_INFO_LOG_LENGTH, &log_length);
-    if (log_length > 0) {
-        GLchar *err_message = GL_NONE;
-        glGetShaderInfoLog(vID, log_length, NULL, err_message);
-        err("Failed to compile vertex shader: %s", curr, (char*)err_message);
-        return 0;
+    if (status == 0) {
+        char err_message[512];
+        glGetShaderInfoLog(fID, log_length, NULL, err_message);
+        err("Failed to compile vertex shader: %s", curr, err_message);
+        return 1;
     }
 
 
@@ -65,11 +66,11 @@ GLuint load_shader(const char* vert_path, const char* frag_path) {
 
     glGetShaderiv(fID, GL_COMPILE_STATUS, &status);
     glGetShaderiv(fID, GL_INFO_LOG_LENGTH, &log_length);
-    if (log_length > 0) {
-        GLchar *err_message = GL_NONE;
+    if (status == 0) {
+        char err_message[512];
         glGetShaderInfoLog(fID, log_length, NULL, err_message);
-        err("Failed to compile fragment shader: %s", curr, (char*)err_message);
-        return 0;
+        err("Failed to compile fragment shader: %s", curr, err_message);
+        return 1;
     }
 
     
@@ -81,11 +82,11 @@ GLuint load_shader(const char* vert_path, const char* frag_path) {
 
     glGetShaderiv(pID, GL_LINK_STATUS, &status);
     glGetShaderiv(pID, GL_INFO_LOG_LENGTH, &log_length);
-    if (log_length > 0) {
-        GLchar *err_message = GL_NONE;
-        glGetShaderInfoLog(pID, log_length, NULL, err_message);
-        err("Failed to link program: %s", curr, (char*)err_message);
-        return 0;
+    if (status == 0) {
+        char err_message[512];
+        glGetShaderInfoLog(fID, log_length, NULL, err_message);
+        err("Failed to link program: %s", curr, err_message);
+        return 1;
     }
 
     glDetachShader(pID, vID);

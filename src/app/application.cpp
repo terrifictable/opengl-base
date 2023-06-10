@@ -14,15 +14,17 @@ Application::~Application() {
 
 
 int Application::run() {
-    int status = glWindow->pre_render();
+    int status = glWindow->pre_render_loop();
     if (status != 0) {
         return status;
     }
     
     while (glWindow->is_running()) {
+        glWindow->pre_render();
         glWindow->render();
+        glWindow->post_render();
     }
 
-    return glWindow->post_render();
+    return glWindow->post_render_loop();
 }
 

@@ -30,5 +30,5 @@
 #define warn(msg, ...) printf(" " ANSI_GREY "[" ANSI_ORANGE "#" ANSI_GREY "] " ANSI_RESET msg "\n", ##__VA_ARGS__)
 
 #define curr __FILE__, __LINE__, __FUNCTION__
-#define err(msg, ...)  printf(" " ANSI_GREY "[" ANSI_RED "-" ANSI_GREY "] (%s:%d at %s)" ANSI_RESET msg "\n", ##__VA_ARGS__)
+#define err(msg, ...)  printf(" " ANSI_GREY "[" ANSI_RED "-" ANSI_GREY "] (%s:%d at %s) " ANSI_RESET msg "\n", ##__VA_ARGS__)
 
