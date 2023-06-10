@@ -1,0 +1,4 @@
+bin/
+*.exe
+opengl_base*
+
