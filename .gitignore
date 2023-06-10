@@ -1,4 +1,7 @@
 bin/
 *.exe
 opengl_base*
+push.sh
+.ccls*
+.cache*
 

@@ -26,7 +26,7 @@ build: $(obj)
 cc:
 	compiledb make build --dry-run
 
-.PHONY: build all clean run
+.PHONY: build all clean run push
 
 %.o: %.cpp
 	-@mkdir -p $(bin)/
