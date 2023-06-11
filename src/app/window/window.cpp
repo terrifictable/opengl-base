@@ -1,6 +1,7 @@
 #include "window.hpp"
 #include <stdlib.h>
 
+#include "GLFW/glfw3.h"
 #include "common.h"
 #include "app/shader/shader.hpp"
 
@@ -30,6 +31,7 @@ void GLWindow::init(const char* title, int width, int height) {
     dbg("%s", "Successfully created window");
 
     glfwMakeContextCurrent(mWindow);
+    glfwSwapInterval(1);
     glewExperimental = true;
     if (glewInit() != GLEW_OK) {
         err("Failed to initialize glew %s", curr, glewGetString(GLEW_VERSION));
@@ -68,6 +70,7 @@ int GLWindow::pre_render_loop() {
 }
 
 void GLWindow::pre_render() {
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -85,6 +88,10 @@ void GLWindow::render() {
 }
 
 void GLWindow::post_render() {
+    int display_w, display_h;
+    glfwGetFramebufferSize(mWindow, &display_w, &display_h);
+    glViewport(0, 0, display_w, display_h);
+
     glfwSwapBuffers(mWindow);
     glfwPollEvents();
 
