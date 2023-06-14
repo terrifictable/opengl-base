@@ -12,6 +12,7 @@ namespace nimgui {
     class Imgui {
     private:
         ImGuiIO* io;
+        ImGuiStyle* style;
         bool show_demo_window = false;
 
     public:

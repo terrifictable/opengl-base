@@ -9,7 +9,7 @@ LDFLAGS :=
 
 
 srcdir := src
-src    := $(wildcard $(srcdir)/*.cpp $(srcdir)/**/*.cpp $(srcdir)/**/**/*.cpp)
+src    := $(wildcard $(srcdir)/*.cpp $(srcdir)/**/*.cpp $(srcdir)/**/**/*.cpp $(srcdir)/**/**/shader/*.cpp)
 obj    := $(src:%.cpp=%.o)
 
 libdir 	:= include/imgui/
@@ -26,7 +26,7 @@ run: build
 build: $(obj)
 	$(CC) $(FLAGS) $(wildcard $(bin)/*.o) $(LINKS) -o $(OUT)
 
-build-libs: $(libsobj)
+libs: $(libsobj)
 
 cc:
 	compiledb make build --dry-run

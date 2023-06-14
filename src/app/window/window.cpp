@@ -3,12 +3,18 @@
 
 #include "GLFW/glfw3.h"
 #include "common.h"
-#include "app/shader/shader.hpp"
+#include "app/gl/shader/shader.hpp"
 
 
 using namespace nwindow;
 
+void GLWindow::errorCallback(int error, const char* description) {
+    err("GLFW error callback:\n\terr: %d\n\tdescription: %s", curr, error, description);
+}
+
 void GLWindow::init(const char* title, int width, int height) {
+    glfwSetErrorCallback(errorCallback);
+
     glewExperimental = true;
     if (!glfwInit()) {
         err("Failed to initialize GLFW %s", curr, glfwGetVersionString());
@@ -50,10 +56,17 @@ static const GLfloat g_vertex_buffer_data[] = {
     -1.0f, -1.0f, 0.0f,
      1.0f, -1.0f, 0.0f,
      0.0f,  1.0f, 0.0f,
+     /* need ebo for rectange */
+     // 1.0f,  1.0f, 0.0f,
+     //-1.0f,  1.0f, 0.0f,
 };
 
 
 int GLWindow::pre_render_loop() {
+    // state.vertexArray = std::make_unique<ngl::VAO>();
+    // state.vertexArray->bind();
+    // state.vertexBuffer = std::make_unique<ngl::VBO>((GLfloat*)g_vertex_buffer_data, sizeof(g_vertex_buffer_data));
+    
     GLuint VAO;
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
@@ -64,8 +77,10 @@ int GLWindow::pre_render_loop() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
     state.vertexBuffer = vertexBuffer;
 
+
     state.programID = load_shader("shaders/vertex.glsl", "shaders/fragment.glsl");
 
+    glfwGetFramebufferSize(mWindow, &display_w, &display_h);
     return 0;
 }
 
@@ -75,6 +90,8 @@ void GLWindow::pre_render() {
 }
 
 void GLWindow::render() {
+    // glUniform1f(glGetUniformLocation(state.programID, "time"), glfwGetTime());
+    // glUniform2f(glGetUniformLocation(state.programID, "resolution"), display_w, display_h);
     glUseProgram(state.programID);
 
     glEnableVertexAttribArray(0);
@@ -88,7 +105,6 @@ void GLWindow::render() {
 }
 
 void GLWindow::post_render() {
-    int display_w, display_h;
     glfwGetFramebufferSize(mWindow, &display_w, &display_h);
     glViewport(0, 0, display_w, display_h);
 

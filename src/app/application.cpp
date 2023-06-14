@@ -1,5 +1,6 @@
 #include "application.hpp"
 #include "app/imgui/imgui.hpp"
+#include "common.h"
 
 #include <memory>
 
@@ -20,10 +21,12 @@ Application::~Application() {
 int Application::run() {
     int status = imgui->pre_render_loop();
     if (status != 0) {
+        err("FUCKING SHIT", curr);
         return status;
     }
     status = glWindow->pre_render_loop();
     if (status != 0) {
+        err("FUCK", curr);
         return status;
     }
     
@@ -41,6 +44,7 @@ int Application::run() {
 
     status = imgui->post_render_loop();
     if (status != 0) {
+        err("FUCK YOURSELF", curr);
         return status;
     }
     return glWindow->post_render_loop();

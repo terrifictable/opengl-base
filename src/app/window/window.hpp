@@ -2,23 +2,29 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <memory>
 
 
 namespace nwindow {
     typedef struct {
         int programID;
+        // std::unique_ptr<ngl::VBO> vertexBuffer;
+        // std::unique_ptr<ngl::VAO> vertexArray;
         GLuint vertexBuffer;
     } state_t;
 
     class GLWindow {
     private:
         GLFWwindow* mWindow;
+        int display_w, display_h;
         bool mIsRunning;
 
         state_t state;
 
+        static void errorCallback(int error, const char* description);
+
     public:
-        GLWindow() : mIsRunning(true) {}
+        GLWindow() {}
         ~GLWindow() {}
 
         void init(const char* title, int width, int height);

@@ -6,12 +6,11 @@
 
 #include "app/application.hpp"
 
-#define WIDTH  1024
+#define WIDTH  1280
 #define HEIGHT 720
-#define TITLE  "Hello World!"
 
 int main() {
-    auto app = std::make_unique<Application>(TITLE, WIDTH, HEIGHT);
+    auto app = std::make_unique<Application>("OpenGL Base", WIDTH, HEIGHT);
     return app->run();
 }
 
