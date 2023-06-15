@@ -1,5 +1,7 @@
 #pragma once
 
+#include "app/gl/vao/vao.hpp"
+#include "app/gl/vbo/vbo.hpp"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <memory>
@@ -8,9 +10,9 @@
 namespace nwindow {
     typedef struct {
         int programID;
-        // std::unique_ptr<ngl::VBO> vertexBuffer;
-        // std::unique_ptr<ngl::VAO> vertexArray;
-        GLuint vertexBuffer;
+        std::unique_ptr<ngl::VBO> vertexBuffer;
+        std::unique_ptr<ngl::VAO> vertexArray;
+        // GLuint vertexBuffer;
     } state_t;
 
     class GLWindow {
@@ -24,7 +26,7 @@ namespace nwindow {
         static void errorCallback(int error, const char* description);
 
     public:
-        GLWindow() {}
+        GLWindow() : mIsRunning(true) {}
         ~GLWindow() {}
 
         void init(const char* title, int width, int height);

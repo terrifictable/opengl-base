@@ -63,20 +63,9 @@ static const GLfloat g_vertex_buffer_data[] = {
 
 
 int GLWindow::pre_render_loop() {
-    // state.vertexArray = std::make_unique<ngl::VAO>();
-    // state.vertexArray->bind();
-    // state.vertexBuffer = std::make_unique<ngl::VBO>((GLfloat*)g_vertex_buffer_data, sizeof(g_vertex_buffer_data));
-    
-    GLuint VAO;
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-
-    GLuint vertexBuffer;
-    glGenBuffers(1, &vertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-    state.vertexBuffer = vertexBuffer;
-
+    state.vertexArray = std::make_unique<ngl::VAO>();
+    state.vertexArray->bind();
+    state.vertexBuffer = std::make_unique<ngl::VBO>((GLfloat*)g_vertex_buffer_data, sizeof(g_vertex_buffer_data));
 
     state.programID = load_shader("shaders/vertex.glsl", "shaders/fragment.glsl");
 
@@ -90,16 +79,14 @@ void GLWindow::pre_render() {
 }
 
 void GLWindow::render() {
-    // glUniform1f(glGetUniformLocation(state.programID, "time"), glfwGetTime());
-    // glUniform2f(glGetUniformLocation(state.programID, "resolution"), display_w, display_h);
+    glUniform1f(glGetUniformLocation(state.programID, "time"), glfwGetTime());
+    glUniform2f(glGetUniformLocation(state.programID, "resolution"), display_w, display_h);
     glUseProgram(state.programID);
 
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, state.vertexBuffer);
-    glVertexAttribPointer(0 /* attribute */, 3 /* size */, GL_FLOAT /* type */, GL_FALSE /* normalized? */, 0 /* stride */, (void*)0 /* offset */);
-
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    glDisableVertexAttribArray(0);
+    
+    state.vertexArray->link(state.vertexBuffer, 0, 3, GL_FLOAT, 0, (void*)0);
+    state.vertexArray->draw(GL_TRIANGLES, 0, 3);
+    state.vertexArray->unlink(state.vertexBuffer, 0);
 
     glUseProgram(0);
 }

@@ -16,7 +16,7 @@ void VAO::link(std::unique_ptr<ngl::VBO> &buffer_object, GLuint layout, GLuint c
     glEnableVertexAttribArray(layout);
     buffer_object->bind();
 
-    glVertexAttribPointer(layout, components_count, GL_FALSE, type, stride, offset);
+    glVertexAttribPointer(layout, components_count, type, GL_FALSE, stride, offset);
 }
 
 void VAO::unlink(std::unique_ptr<ngl::VBO> &buffer_object, GLuint layout) {

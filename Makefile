@@ -9,7 +9,7 @@ LDFLAGS :=
 
 
 srcdir := src
-src    := $(wildcard $(srcdir)/*.cpp $(srcdir)/**/*.cpp $(srcdir)/**/**/*.cpp $(srcdir)/**/**/shader/*.cpp)
+src    := $(wildcard $(srcdir)/*.cpp $(srcdir)/**/*.cpp $(srcdir)/**/**/*.cpp $(srcdir)/**/**/**/*.cpp)
 obj    := $(src:%.cpp=%.o)
 
 libdir 	:= include/imgui/
