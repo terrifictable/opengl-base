@@ -6,6 +6,7 @@
 #include <imgui/backends/imgui_impl_glfw.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 
+#include "roboto.h"
 
 using namespace nimgui;
 
@@ -21,6 +22,11 @@ void Imgui::init(std::unique_ptr<nwindow::GLWindow> &window) {
     io->ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
     io->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     io->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+    io->Fonts->AddFontDefault();
+    ImFont* font = io->Fonts->AddFontFromMemoryCompressedTTF(roboto_compressed_data, roboto_compressed_size, 15);
+    assert(font != nullptr && "Failed to load roboto font");
+    io->FontDefault = font;
 
     ImGui::StyleColorsDark();
 
