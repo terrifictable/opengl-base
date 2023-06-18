@@ -1,11 +1,14 @@
 #include "shader.hpp"
 
+
 #include <fstream>
 #include <ios>
 #include <iostream>
 #include <sstream>
 #include <vector>
 
+
+#include "app/gl/gl_utils.hpp"
 #include "common.h"
 
 
@@ -24,20 +27,25 @@ std::string read_file(const char* path, std::ios_base::openmode type) {
 }
 
 
-GLuint load_shader(const char* vert_path, const char* frag_path) {
+using namespace ngl;
+
+Shader::Shader() {}
+Shader::~Shader() {}
+
+void Shader::init(const char* vert_path, const char* frag_path) {
     GLuint vID = glCreateShader(GL_VERTEX_SHADER);
     GLuint fID = glCreateShader(GL_FRAGMENT_SHADER);
 
     std::string vert_code, frag_code;
     vert_code = read_file(vert_path, std::ios::in);
     if (vert_code == "\0") {
-        err("Failed to read file: %s", curr, vert_path);
-        return 0;
+        err("Failed to read file: %s", vert_path);
+        return;
     }
     frag_code = read_file(frag_path, std::ios::in);
     if (vert_code == "\0") {
-        err("Failed to read file: %s", curr, vert_path);
-        return 0;
+        err("Failed to read file: %s", vert_path);
+        return;
     }
 
     GLint status = GL_FALSE;
@@ -54,8 +62,8 @@ GLuint load_shader(const char* vert_path, const char* frag_path) {
     if (status == 0) {
         char err_message[512];
         glGetShaderInfoLog(fID, log_length, NULL, err_message);
-        err("Failed to compile vertex shader: %s", curr, err_message);
-        return 1;
+        err("Failed to compile vertex shader: \n%s", err_message);
+        return;
     }
 
 
@@ -69,8 +77,8 @@ GLuint load_shader(const char* vert_path, const char* frag_path) {
     if (status == 0) {
         char err_message[512];
         glGetShaderInfoLog(fID, log_length, NULL, err_message);
-        err("Failed to compile fragment shader: %s", curr, err_message);
-        return 1;
+        err("Failed to compile fragment shader: \n%s", err_message);
+        return;
     }
 
     
@@ -79,22 +87,41 @@ GLuint load_shader(const char* vert_path, const char* frag_path) {
     glAttachShader(pID, vID);
     glAttachShader(pID, fID);
     glLinkProgram(pID);
-
-    glGetShaderiv(pID, GL_LINK_STATUS, &status);
-    glGetShaderiv(pID, GL_INFO_LOG_LENGTH, &log_length);
+ 
+    glGetProgramiv(pID, GL_LINK_STATUS, &status);
+    glGetProgramiv(pID, GL_INFO_LOG_LENGTH, &log_length);
     if (status == 0) {
         char err_message[512];
         glGetShaderInfoLog(fID, log_length, NULL, err_message);
-        err("Failed to link program: %s", curr, err_message);
-        return 1;
+        err("Failed to link program: \n%s", err_message);
+        return;
     }
 
-    glDetachShader(pID, vID);
     glDetachShader(pID, fID);
+    glDetachShader(pID, vID);
 
     glDeleteShader(vID);
     glDeleteShader(fID);
+    
 
-    return pID;
+    this->id = pID;
 }
+
+void Shader::use(unused std::function<void(GLuint)> const& lambda) {
+    // lambda(this->id);
+    glUseProgram(this->id);
+}
+
+void Shader::use() {
+    glUseProgram(this->id);
+}
+
+void Shader::finish() {
+    glUseProgram(0);
+}
+
+void Shader::destruct() {
+    glDeleteProgram(this->id);
+}
+
 
