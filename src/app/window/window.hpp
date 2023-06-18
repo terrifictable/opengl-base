@@ -1,5 +1,6 @@
 #pragma once
 
+#include "app/gl/shader/shader.hpp"
 #include "app/gl/vao/vao.hpp"
 #include "app/gl/vbo/vbo.hpp"
 #include <GL/glew.h>
@@ -9,11 +10,11 @@
 
 namespace nwindow {
     typedef struct {
-        int programID;
+        std::unique_ptr<ngl::Shader> shader;
         std::unique_ptr<ngl::VBO> vertexBuffer;
         std::unique_ptr<ngl::VAO> vertexArray;
-        // GLuint vertexBuffer;
     } state_t;
+
 
     class GLWindow {
     private:
