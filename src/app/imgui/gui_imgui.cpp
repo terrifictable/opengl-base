@@ -21,7 +21,7 @@ void Imgui::init(std::unique_ptr<nwindow::GLWindow> &window) {
     io->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io->ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
     io->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    io->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+    // io->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
     io->Fonts->AddFontDefault();
     ImFont* font = io->Fonts->AddFontFromMemoryCompressedTTF(roboto_compressed_data, roboto_compressed_size, 15);

@@ -22,13 +22,13 @@ int Application::run() {
 
     int status = imgui->pre_render_loop();
     if (status != 0) {
-        err("imgui->pre_render_loop returned non 0 value: %d", curr, status);
+        err("imgui->pre_render_loop returned non 0 value: %d", status);
         return status;
     }
 
     status = glWindow->pre_render_loop();
     if (status != 0) {
-        err("glWindow->pre_render_loop returned non 0 value: %d", curr, status);
+        err("glWindow->pre_render_loop returned non 0 value: %d", status);
         return status;
     }
     
@@ -64,12 +64,12 @@ int Application::run() {
 
     status = imgui->post_render_loop();
     if (status != 0) {
-        err("imgui->post_render_loop returned non 0 value: %d", curr, status);
+        err("imgui->post_render_loop returned non 0 value: %d", status);
         return status;
     }
     status = glWindow->post_render_loop();
     if (status != 0) {
-        err("glWindow->post_render_loop returned non 0 value: %d", curr, status);
+        err("glWindow->post_render_loop returned non 0 value: %d", status);
         return status;
     }
     return 0;
