@@ -1,8 +1,11 @@
 #include "window.hpp"
 #include <stdlib.h>
+#include <string.h>
 
 #include "GLFW/glfw3.h"
+#include "app/gl/ebo/ebo.hpp"
 #include "app/gl/gl_utils.hpp"
+#include "app/storage.hpp"
 #include "common.h"
 #include "app/gl/shader/shader.hpp"
 
@@ -68,10 +71,15 @@ void GLWindow::init(const char* title, int width, int height) {
 static const GLfloat g_vertex_buffer_data[] = {
     -1.0f, -1.0f, 0.0f,
      1.0f, -1.0f, 0.0f,
-     0.0f,  1.0f, 0.0f,
+     // 0.0f,  1.0f, 0.0f,
      /* need ebo for rectange */
-     // 1.0f,  1.0f, 0.0f,
-     //-1.0f,  1.0f, 0.0f,
+      1.0f,  1.0f, 0.0f,
+     -1.0f,  1.0f, 0.0f,
+};
+
+static const GLuint indices[] = {
+    0, 1, 3,
+    1, 2, 3
 };
 
 
@@ -79,6 +87,15 @@ int GLWindow::pre_render_loop() {
     state.vertexArray = std::make_unique<ngl::VAO>();
     state.vertexArray->bind();
     state.vertexBuffer = std::make_unique<ngl::VBO>((GLfloat*)g_vertex_buffer_data, sizeof(g_vertex_buffer_data));
+
+    ngl::EBO ebo((GLuint*)indices, sizeof(indices));
+    state.vertexArray->link(state.vertexBuffer, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
+    state.vertexArray->link(state.vertexBuffer, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+
+    state.vertexArray->unbind();
+    state.vertexBuffer->unbind();
+    ebo.unbind();
+
 
     state.shader = std::make_unique<ngl::Shader>();
     state.shader->init("shaders/vertex.glsl", "shaders/fragment.glsl");
@@ -93,21 +110,52 @@ void GLWindow::pre_render() {
 }
 
 void GLWindow::render() {
-    state.shader->use([&](GLuint id) {
-        glUniform1f(glGetUniformLocation(id, "time"), glfwGetTime());
-        glUniform2f(glGetUniformLocation(id, "resolution"), display_w, display_h);
-    });
+    if (glfwGetKey(mWindow, GLFW_KEY_F3) == GLFW_PRESS) { // reload shader
+        state.shader->init("shaders/vertex.glsl", "shaders/fragment.glsl");
+    }
 
-    state.vertexArray->link(state.vertexBuffer, 0, 3, GL_FLOAT, 0, (void*)0);
-    state.vertexArray->draw(GL_TRIANGLES, 0, 3);
-    state.vertexArray->unlink(state.vertexBuffer, 0);
+    if (state.shader->is_valid()) {
+        state.shader->use([&](GLuint id) {
+                glUniform1f(glGetUniformLocation(id, "time"), glfwGetTime());
+                glUniform2f(glGetUniformLocation(id, "resolution"), display_w, display_h);
 
-    state.shader->finish();
+                int size = strlen(g_data.str);
+                int int_arr[256];
+                for (int i=0; i < (int)sizeof(g_data.str) - 1 && i < size; i++) {
+                    int_arr[i] = g_data.str[i];
+                }
+
+                if (g_data.centered) {
+                    g_data.text_x = -1;
+                    g_data.text_y = -1;
+                }
+
+                glUniform1i(glGetUniformLocation(id, "u_size"), size);
+                glUniform1iv(glGetUniformLocation(id, "u_data"), 256, int_arr);
+                glUniform1f(glGetUniformLocation(id, "u_anim_strength"), g_data.anim_strength);
+                glUniform2f(glGetUniformLocation(id, "u_text_pos"), g_data.text_x, g_data.text_y);
+        });
+
+        if (state.vertexArray->is_valid() && state.vertexBuffer->is_valid()) {
+            state.vertexArray->link(state.vertexBuffer, 0, 3, GL_FLOAT, 0 * sizeof(float), (void*)0);
+            state.vertexArray->link(state.vertexBuffer, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+            state.vertexArray->draw(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            state.vertexArray->unlink(state.vertexBuffer, 0);
+        } else {
+            warn("%s", "vertexArray or vertexBuffer is invalid");
+        }
+ 
+        state.shader->finish();
+    } else {
+        warn("%s", "shader is invalid");
+    }
 }
 
 void GLWindow::post_render() {
     glfwGetFramebufferSize(mWindow, &display_w, &display_h);
     glViewport(0, 0, display_w, display_h);
+    g_data.display_w = display_w;
+    g_data.display_h = display_h;
 
     glfwSwapBuffers(mWindow);
     glfwPollEvents();

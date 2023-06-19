@@ -5,23 +5,26 @@
 #include <ios>
 
 std::string read_file(const char* path, std::ios_base::openmode type);
-// GLuint load_shader(const char* vert_path, const char* frag_path);
 
 namespace ngl {
-    // TODO: 
     class Shader {
     private:
         GLuint id;   
+        bool valid;
 
     public:
-        Shader();
-        ~Shader();
+        Shader() : valid(true) {}
+        ~Shader() {
+            this->destruct();
+        }
 
         void init(const char* vert_path, const char* frag_path);
         void use(std::function<void(GLuint)> const& lambda);
         void use();
         void finish();
         void destruct();
+
+        bool is_valid();
     };
 }
 

@@ -1,9 +1,11 @@
 #include "application.hpp"
 #include "app/imgui/imgui.hpp"
+#include "app/storage.hpp"
 #include "common.h"
 
 #include <memory>
 
+t_data g_data;
 
 Application::Application(const char* name, int width, int height) {
     glWindow = std::make_unique<nwindow::GLWindow>();

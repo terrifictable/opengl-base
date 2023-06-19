@@ -3,7 +3,7 @@
 
 using namespace ngl;
 
-EBO::EBO(GLfloat* indicies, GLsizeiptr size) {
+EBO::EBO(GLuint* indicies, GLsizeiptr size) {
     glGenBuffers(1, &id);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, indicies, GL_STATIC_DRAW);

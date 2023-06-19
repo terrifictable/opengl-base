@@ -9,7 +9,7 @@ namespace ngl {
         GLuint id;
 
     public:
-        EBO(GLfloat* incdicies, GLsizeiptr size);
+        EBO(GLuint* incdicies, GLsizeiptr size);
         ~EBO();
 
         void bind();

@@ -29,9 +29,6 @@ std::string read_file(const char* path, std::ios_base::openmode type) {
 
 using namespace ngl;
 
-Shader::Shader() {}
-Shader::~Shader() {}
-
 void Shader::init(const char* vert_path, const char* frag_path) {
     GLuint vID = glCreateShader(GL_VERTEX_SHADER);
     GLuint fID = glCreateShader(GL_FRAGMENT_SHADER);
@@ -102,14 +99,15 @@ void Shader::init(const char* vert_path, const char* frag_path) {
 
     glDeleteShader(vID);
     glDeleteShader(fID);
-    
+ 
 
+    this->valid = is_valid();
     this->id = pID;
 }
 
-void Shader::use(unused std::function<void(GLuint)> const& lambda) {
-    // lambda(this->id);
+void Shader::use(std::function<void(GLuint)> const& lambda) {
     glUseProgram(this->id);
+    lambda(this->id);
 }
 
 void Shader::use() {
@@ -122,6 +120,19 @@ void Shader::finish() {
 
 void Shader::destruct() {
     glDeleteProgram(this->id);
+    this->valid = false;
 }
 
+
+bool Shader::is_valid() {
+    bool old_state = this->valid;
+    this->valid = glIsProgram(this->id);
+    if (old_state && !this->valid) {
+        if (this->valid) {
+            err("Shader (%d) is now invalid", this->id);
+        }
+    }
+
+    return this->valid;
+}
 
